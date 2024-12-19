@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Личный кабинет</title>
+    <link rel="stylesheet" href="profile.css">
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="container">
+            <h1 class="logo"><a href="index.html">Фотоальбом</a></h1>
+            <nav>
+                <ul>
+                    <li><a href="index.html">Главная</a></li>
+                    <li><a href="logout.php" class="header-btn">Выйти</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Личный кабинет -->
+    <main>
+        <div class="container">
+            <h2>Добро пожаловать, <span id="userName">Имя пользователя</span>!</h2>
+            <p>Это ваш личный кабинет. Здесь вы можете загружать изображения и управлять ими.</p>
+
+            <!-- Форма загрузки изображения -->
+            <h3>Добавить изображение</h3>
+            <form action="upload_image.php" method="POST" enctype="multipart/form-data" id="uploadForm">
+                <label for="title">Название:</label>
+                <input type="text" id="title" name="title" required>
+
+                <label for="description">Описание:</label>
+                <textarea id="description" name="description" required></textarea>
+
+                <label for="category">Категория:</label>
+                <select id="category" name="category" required>
+                    <option value="nature">Природа</option>
+                    <option value="animals">Животные</option>
+                    <option value="city">Город</option>
+                </select>
+
+                <label for="image">Изображение:</label>
+                <input type="file" id="image" name="image" required>
+
+                <button type="submit">Добавить</button>
+            </form>
+
+            <h3>Загрузка лог-файла</h3>
+            <input type="file" id="logFileInput">
+            <progress id="progressBar" value="0" max="100"></progress>
+            <button id="uploadLogButton">Загрузить лог</button>
+
+
+            <!-- Список загруженных изображений -->
+            <h3>Ваши изображения</h3>
+            <div id="userImages" class="image-gallery">
+                <!-- Сюда будут подгружаться изображения -->
+            </div>
+            
+        </div>
+        <h3>Отчёт об удельном весе файлов</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Тип файла</th>
+                    <th>Количество запросов</th>
+                    <th>Общий объём (MB)</th>
+                </tr>
+            </thead>
+            <tbody id="reportTableBody"></tbody>
+        </table>
+
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <p>&copy; 2024 Фотоальбом. Все права защищены.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Получение имени пользователя через PHP-сессию
+        document.addEventListener('DOMContentLoaded', () => {
+            fetch('session_manager.php')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.isLoggedIn) {
+                        document.getElementById('userName').innerText = data.userName;
+                        loadUserImages();
+                    } else {
+                        window.location.href = 'index.php'; // Если пользователь не авторизован, перенаправляем
+                    }
+                })
+                .catch(error => console.error('Ошибка загрузки сессии:', error));
+        });
+
+        // Подгрузка изображений пользователя
+        function loadUserImages() {
+            fetch('get_user_images.php')
+                .then(response => response.json())
+                .then(data => {
+                    const gallery = document.getElementById('userImages');
+                    gallery.innerHTML = '';
+                    data.forEach(image => {
+                        const imageCard = document.createElement('div');
+                        imageCard.classList.add('image-card');
+                        imageCard.innerHTML = `
+                            <img src="${image.image_url}" alt="${image.title}" class="gallery-image">
+                            <h4>${image.title}</h4>
+                            <p>${image.description}</p>
+                            <p>Категория: ${image.category}</p>
+                        `;
+                        gallery.appendChild(imageCard);
+                    });
+                })
+                .catch(error => console.error('Ошибка загрузки изображений:', error));
+        }
+    </script>
+    <script>
+        function loadReport() {
+            fetch('generate_report.php')
+                .then(response => response.json())
+                .then(data => {
+                    const tableBody = document.getElementById('reportTableBody');
+                    tableBody.innerHTML = ''; // Очистка таблицы перед добавлением новых данных
+    
+                    data.forEach(row => {
+                        const tr = document.createElement('tr');
+                        tr.innerHTML = `
+                            <td>${row.file_type}</td>
+                            <td>${row.total_requests}</td>
+                            <td>${(row.total_size / 1024 / 1024).toFixed(2)} MB</td>
+                        `;
+                        tableBody.appendChild(tr);
+                    });
+                })
+                .catch(error => console.error('Ошибка загрузки отчёта:', error));
+        }
+    
+        // Загружаем отчёт при загрузке страницы
+        document.addEventListener('DOMContentLoaded', loadReport);
+    </script>   
+    <script>
+        document.getElementById('uploadLogButton').addEventListener('click', () => {
+    let offset = 0;
+    const batchSize = 100;
+
+    function uploadBatch() {
+        fetch('upload_log.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ offset })
+        })
+        .then(response => response.json())
+        .then(data => {
+            offset += batchSize;
+            document.getElementById('progressBar').value = (offset / lines.length) * 100;
+
+            if (data.processed === batchSize) {
+                uploadBatch(); // Загрузка следующей порции
+            } else {
+                console.log('Лог-файл загружен.');
+            }
+        })
+        .catch(error => console.error('Ошибка загрузки логов:', error));
+    }
+
+    uploadBatch();
+    });
+    </script> 
+</body>
+</html>

@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Фотоальбом</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+     <!-- Header -->
+     <header>
+        <div class="container">
+            <h1 class="logo"><a href="#">Фотоальбом</a></h1>
+            <nav>
+                <ul>
+                    <li><a href="#">Главная</a></li>
+                    <li><a href="#">Лента фото</a></li>
+                    <li><button class="header-btn" onclick="openModal('registerModal')">Регистрация</button></li>
+                    <li><button class="header-btn" onclick="openModal('loginModal')">Войти</button></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Модальное окно для регистрации -->
+    <div id="registerModal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeModal('registerModal')">&times;</span>
+            <h2>Регистрация</h2>
+            <form action="register.php" method="POST" enctype="multipart/form-data">
+                <label for="login">Логин:</label>
+                <input type="text" id="login" name="login" required>
+
+                <label for="password">Пароль:</label>
+                <input type="password" id="password" name="password" required>
+
+                <label for="full_name">ФИО:</label>
+                <input type="text" id="full_name" name="full_name" required>
+
+                <label for="email">Электронная почта:</label>
+                <input type="email" id="email" name="email" required>
+
+                <label for="avatar">Аватар:</label>
+                <input type="file" id="avatar" name="avatar">
+
+                <button type="submit">Зарегистрироваться</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Модальное окно для авторизации -->
+    <div id="loginModal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeModal('loginModal')">&times;</span>
+            <h2>Войти</h2>
+            <form action="login.php" method="POST">
+                <label for="login">Логин:</label>
+                <input type="text" id="login" name="login" required>
+
+                <label for="password">Пароль:</label>
+                <input type="password" id="password" name="password" required>
+
+                <button type="submit">Войти</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Slideshow -->
+    <section class="slideshow">
+        <div class="container">
+            <div class="slideshow-container">
+                <div class="slide fade">
+                    <img src="image1.jpg" alt="Slide 1">
+                </div>
+                <div class="slide fade">
+                    <img src="image2.jpg" alt="Slide 2">
+                </div>
+                <div class="slide fade">
+                    <img src="image3.jpg" alt="Slide 3">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Post Filters -->
+    <section class="filters">
+        <div class="container">
+            <form action="index.php" method="GET">
+                <input type="text" name="tag" placeholder="Тэг...">
+                <select name="category">
+                    <option value="">Категория</option>
+                    <option value="nature">Природа</option>
+                    <option value="animals">Животные</option>
+                    <option value="city">Город</option>
+                </select>
+                <input type="date" name="date">
+                <button type="submit">Фильтровать</button>
+            </form>
+        </div>
+    </section>
+
+    <!-- Image Posts -->
+    <section class="image-gallery">
+        <div class="container">
+            <!-- Посты будут загружаться динамически с помощью PHP -->
+            <div class="image-post">
+                <img src="image1.jpg" alt="Post Image">
+                <div class="image-info">
+                    <h3>Заголовок изображения</h3>
+                    <p>Описание изображения...</p>
+                    <div class="actions">
+                        <button class="like-btn">👍 20</button>
+                        <button class="comment-btn">💬 5</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Добавьте здесь больше постов, динамически загружая из базы данных -->
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <p>&copy; 2024 Фотоальбом. Все права защищены.</p>
+        </div>
+    </footer>
+
+    <script>
+        function openModal(id) {
+            document.getElementById(id).style.display = 'block';
+        }
+
+        function closeModal(id) {
+            document.getElementById(id).style.display = 'none';
+        }
+    </script>
+    <script src="mainPage.js"></script>
+</body>
+</html>

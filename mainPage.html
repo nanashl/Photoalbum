@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Регистрация</title>
+    <link rel="stylesheet" href="/css/mainPage.css">
+</head>
+<body>
+    <div class="modal" id="authModal">
+        <form action="register.php" method="POST" enctype="multipart/form-data">
+            <h2>Регистрация</h2>
+            <label for="login">Логин</label>
+            <input type="text" id="login" name="login" required>
+            <label for="password">Пароль</label>
+            <input type="password" id="password" name="password" required>
+            <label for="full_name">ФИО</label>
+            <input type="text" id="full_name" name="full_name" required>
+            <label for="email">Почта</label>
+            <input type="email" id="email" name="email" required>
+            <label for="avatar">Аватар</label>
+            <input type="file" id="avatar" name="avatar">
+            <button type="submit">Зарегистрироваться</button>
+        </form>
+    </div>
+</body>
+</html>
